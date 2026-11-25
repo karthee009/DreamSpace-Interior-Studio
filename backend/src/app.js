@@ -70,11 +70,11 @@ app.use(session({
   store: sessionStore,
   proxy: env.secureCookie,
   cookie: {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: env.secureCookie,
-    maxAge: 86400000
-  }
+  httpOnly: true,
+  sameSite: env.secureCookie ? 'none' : 'lax',
+  secure: env.secureCookie,
+  maxAge: 86400000
+}
 }));
 
 app.use(
