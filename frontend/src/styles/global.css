@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #EFE9DF;
+  --surface: #FAF7F2;
+  --card: #FFFFFF;
+  --ink: #1B1A17;
+  --muted: #6B665D;
+  --line: #DDD5C7;
+  --accent: #B94E2F;
+  --accent-dark: #963A20;
+  --accent-soft: #F3DDD3;
+  --olive: #5E6B55;
+  --sage: #E1E5D6;
+  --sand: #E7DFD1;
+  --dark: #1F1D1A;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --serif: 'Fraunces', Georgia, serif;
+  --shadow-sm: 0 2px 10px rgba(27, 26, 23, .05);
+  --shadow-md: 0 16px 40px rgba(27, 26, 23, .10);
+
+  font-family: 'Manrope', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: var(--bg); animation: ds-fade-in .5s ease both; }
+button, input, textarea, select { font: inherit; }
+a { color: inherit; transition: color .2s ease; }
+::selection { background: var(--accent); color: #fff; }
+
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+* { scrollbar-width: thin; scrollbar-color: #C9BFAE transparent; }
+
+/* ---------- Keyframes ---------- */
+@keyframes ds-fade-in { from { opacity: 0; } }
+@keyframes ds-fade-up { from { opacity: 0; transform: translateY(24px); } }
+@keyframes ds-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ds-shine { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+
+/* ---------- Buttons ---------- */
+button, .btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease,
+              transform .2s var(--ease), box-shadow .2s ease;
+}
+.btn-dark, .btn-primary, button[type="submit"] {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+}
+.btn-dark:hover, .btn-primary:hover, button[type="submit"]:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(185, 78, 47, .32);
+}
+button:active, .btn:active { transform: translateY(0) scale(.97); }
+.btn::after, button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%);
+  background-size: 200% 100%;
+  background-position: -200% 0;
+  pointer-events: none;
+}
+.btn:hover::after, button[type="submit"]:hover::after { animation: ds-shine .9s ease; }
+
+/* ---------- Inputs ---------- */
+input, textarea, select {
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 4px rgba(185, 78, 47, .14);
+  background: #fff;
+}
+
+/* ---------- Upload ---------- */
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+.upload-label input { font-size: 12px; }
+
+/* ---------- Product visual ---------- */
+.product-visual {
+  height: 150px;
+  background: linear-gradient(135deg, var(--sand), var(--surface));
+  border-radius: var(--r-md);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s ease;
+}
+.product-visual > span {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  background: var(--surface);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+.product-shape {
+  width: 105px;
+  height: 47px;
+  background: #C7A27C;
+  border-radius: 13px 13px 4px 4px;
+  box-shadow: 0 12px 0 #A07F5C;
+  position: relative;
+}
+.product-shape:before {
+  content: "";
+  position: absolute;
+  left: 8px; right: 8px; top: 8px;
+  height: 30px;
+  background: #D8B995;
+  border-radius: 8px;
+}
+.product-shape:after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  bottom: -15px;
+  width: 6px;
+  height: 17px;
+  background: #4A3A2B;
+  box-shadow: 83px 0 #4A3A2B;
+}
+.product-card:nth-child(3n) .product-shape { background: var(--olive); box-shadow: 0 12px 0 #46503F; }
+.product-card:nth-child(3n) .product-shape:before { background: #8A9880; }
+.product-card:nth-child(3n+2) .product-shape {
+  width: 75px; height: 38px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 8px 0 #8E3F27;
+}
+.product-card:nth-child(3n+2) .product-shape:before { display: none; }
+
+/* ---------- Product card ---------- */
+.product-card {
+  animation: ds-fade-up .6s var(--ease) both;
+  transition: transform .3s var(--ease), box-shadow .3s ease, border-color .3s ease;
+}
+.product-card:nth-child(1) { animation-delay: .05s; }
+.product-card:nth-child(2) { animation-delay: .12s; }
+.product-card:nth-child(3) { animation-delay: .19s; }
+.product-card:nth-child(4) { animation-delay: .26s; }
+.product-card:nth-child(5) { animation-delay: .33s; }
+.product-card:nth-child(6) { animation-delay: .40s; }
+.product-card:nth-child(n+7) { animation-delay: .45s; }
+.product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--accent); }
+.product-card:hover .product-visual { background: linear-gradient(135deg, var(--accent-soft), var(--surface)); }
+.product-card:hover .product-shape { animation: ds-float 2.2s ease-in-out infinite; }
+
+.panel, .form-card, .designer-sidebar, .scene-panel, .table-wrap, .stat, .product-card {
+  border-color: var(--line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-delay: 0s !important; }
+}

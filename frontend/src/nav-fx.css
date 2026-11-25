@@ -1,0 +1,100 @@
+/* ===== DreamSpace navbar FX ===== */
+@keyframes nx-in { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes nx-dot { 0% { box-shadow: 0 0 0 0 rgba(94, 107, 85, .5); } 100% { box-shadow: 0 0 0 8px rgba(94, 107, 85, 0); } }
+
+/* ---------- Base ---------- */
+.topbar {
+  transition: transform .5s var(--ease), width .5s var(--ease), border-radius .5s var(--ease),
+              background-color .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+/* Mouse-follow spotlight */
+.topbar::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity .4s ease;
+  background: radial-gradient(240px circle at var(--tx, 50%) var(--ty, 50%),
+              color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+}
+.topbar:hover::before { opacity: 1; }
+
+/* Logo mark rotates as you scroll (uses --sy from fx.js) */
+.brand-mark { rotate: calc(var(--sy, 0) * .5deg); }
+
+/* Live status dot on user chip */
+.user-chip { display: inline-flex; align-items: center; gap: 8px; }
+.user-chip::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--olive);
+  animation: nx-dot 1.8s ease-out infinite;
+}
+
+/* ---------- Sliding pill indicator ---------- */
+.topbar nav { position: relative; }
+.fx-pill {
+  position: absolute; left: 0; top: 0; z-index: 0; width: 0; height: 0;
+  border-radius: 999px; background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+  opacity: 0; pointer-events: none;
+}
+.fx-pill-ready .fx-pill {
+  transition: transform .45s cubic-bezier(.3, 1.3, .5, 1), width .45s cubic-bezier(.3, 1.3, .5, 1),
+              height .45s var(--ease), opacity .25s ease;
+}
+
+/* ---------- Burger (mobile only) ---------- */
+.fx-burger {
+  display: none; position: relative; width: 44px; height: 44px; padding: 0; order: 2;
+  border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.fx-burger i {
+  position: absolute; left: 13px; width: 18px; height: 2px; border-radius: 2px; background: currentColor;
+  transition: transform .4s var(--ease), opacity .2s ease, top .4s var(--ease);
+}
+.fx-burger i:nth-child(1) { top: 16px; }
+.fx-burger i:nth-child(2) { top: 21px; }
+.fx-burger i:nth-child(3) { top: 26px; }
+.fx-open .fx-burger i:nth-child(1) { top: 21px; transform: rotate(45deg); }
+.fx-open .fx-burger i:nth-child(2) { opacity: 0; }
+.fx-open .fx-burger i:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+
+/* ---------- Desktop: floating capsule + pill ---------- */
+@media (min-width: 901px) {
+  .topbar.fx-scrolled {
+    top: 12px; min-height: 80px; padding: 16px 26px;
+    width: min(1200px, calc(100% - 32px)); margin-inline: auto;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: rgba(250, 247, 242, .72);
+    box-shadow: 0 14px 40px rgba(27, 26, 23, .12);
+  }
+  .topbar nav.fx-pill-on a { position: relative; z-index: 1; }
+  .topbar nav.fx-pill-on a:hover,
+  .topbar nav.fx-pill-on a.active { background: transparent; }
+  .topbar nav.fx-pill-on:hover a.active:not(:hover) { color: var(--muted); }
+}
+
+/* ---------- Mobile: slide-down menu ---------- */
+@media (max-width: 900px) {
+  .fx-pill { display: none; }
+  .fx-burger { display: block; }
+  .topbar { gap: 12px; }
+  .topbar.fx-scrolled { min-height: 80px; padding-top: 16px; padding-bottom: 16px; }
+  .topbar.fx-open { transform: none !important; }
+  .topbar nav {
+    flex-direction: column; align-items: stretch; flex-wrap: nowrap;
+    max-height: 0; opacity: 0; overflow: hidden; pointer-events: none; padding: 0;
+    transition: max-height .5s var(--ease), opacity .3s ease, padding .3s ease;
+  }
+  .topbar.fx-open nav { max-height: 420px; opacity: 1; pointer-events: auto; padding: 8px 0 4px; }
+  .topbar nav a { font-size: 15px; padding: 13px 16px; }
+  .topbar.fx-open nav a { animation: nx-in .5s var(--ease) both; }
+  .topbar.fx-open nav a:nth-child(1) { animation-delay: .06s; }
+  .topbar.fx-open nav a:nth-child(2) { animation-delay: .11s; }
+  .topbar.fx-open nav a:nth-child(3) { animation-delay: .16s; }
+  .topbar.fx-open nav a:nth-child(4) { animation-delay: .21s; }
+  .topbar.fx-open nav a:nth-child(5) { animation-delay: .26s; }
+  .topbar.fx-open nav a:nth-child(n+6) { animation-delay: .31s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-chip::before, .topbar.fx-open nav a { animation: none !important; }
+  .brand-mark { rotate: none; }
+}

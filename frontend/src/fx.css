@@ -1,0 +1,180 @@
+/* ===== DreamSpace FX layer ===== */
+@property --fx-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes fx-spin { to { --fx-ang: 360deg; } }
+@keyframes fx-word { to { transform: none; } }
+@keyframes fx-rip { to { transform: scale(1); opacity: 0; } }
+@keyframes fx-pulse { 0% { transform: scale(.9); opacity: .6; } 100% { transform: scale(1.55); opacity: 0; } }
+@keyframes fx-bump { 30% { transform: scale(1.18); color: var(--accent); } }
+@keyframes fx-load { to { transform: scaleX(1); } }
+@keyframes fx-rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes fx-grain {
+  0% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); } 60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); } 100% { transform: translate(0, 0); }
+}
+@keyframes fx-aurora-a { to { transform: translate(18vmax, 10vmax) scale(1.25); } }
+@keyframes fx-aurora-b { to { transform: translate(-16vmax, -12vmax) scale(1.2); } }
+
+/* ---------- Film grain ---------- */
+body::after {
+  content: ""; position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: fx-grain 1s steps(6) infinite;
+}
+
+/* ---------- Scroll progress ---------- */
+#fx-progress {
+  position: fixed; left: 0; top: 0; width: 100%; height: 3px; z-index: 100;
+  background: linear-gradient(90deg, var(--accent), #E58A68);
+  transform: scaleX(0); transform-origin: left;
+}
+
+/* ---------- Intro curtain ---------- */
+#fx-curtain {
+  position: fixed; inset: 0; z-index: 200; display: grid; place-items: center;
+  background: var(--dark); color: #FAF5EA;
+  transition: transform 1s cubic-bezier(.8, 0, .2, 1);
+}
+#fx-curtain span {
+  font: italic 500 clamp(34px, 7vw, 64px) var(--serif); letter-spacing: -1px;
+  animation: fx-rise .9s var(--ease) both;
+}
+#fx-curtain span b { color: #E58A68; font-weight: 500; }
+#fx-curtain::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 3px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  animation: fx-load .9s var(--ease) forwards;
+}
+#fx-curtain.fx-out { transform: translateY(-100%); }
+
+/* ---------- Custom cursor ---------- */
+#fx-ring, #fx-dot { position: fixed; left: 0; top: 0; pointer-events: none; z-index: 120; opacity: 0; }
+.fx-cursor-on #fx-ring, .fx-cursor-on #fx-dot { opacity: 1; }
+#fx-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--accent); transition: opacity .3s; }
+#fx-ring {
+  width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
+  border: 1.5px solid var(--accent); display: grid; place-items: center;
+  transition: width .3s var(--ease), height .3s var(--ease), margin .3s var(--ease),
+              background-color .3s, border-radius .3s, opacity .3s, scale .2s;
+}
+#fx-ring span { font: 800 11px 'Manrope', sans-serif; color: #fff; opacity: 0; transition: opacity .2s; letter-spacing: .5px; }
+#fx-ring.fx-hot { width: 64px; height: 64px; margin: -32px 0 0 -32px; background: color-mix(in srgb, var(--accent) 14%, transparent); }
+#fx-ring.fx-label { width: 78px; height: 78px; margin: -39px 0 0 -39px; background: var(--accent); }
+#fx-ring.fx-label span { opacity: 1; }
+#fx-ring.fx-text { width: 4px; height: 28px; margin: -14px 0 0 -2px; border-radius: 3px; background: var(--accent); }
+#fx-ring.fx-down { scale: .82; }
+#fx-ring.fx-gone, #fx-dot.fx-gone { opacity: 0 !important; }
+
+/* ---------- Sound toggle ---------- */
+#fx-sound {
+  position: fixed; right: 18px; bottom: 18px; z-index: 110; width: 46px; height: 46px; padding: 0;
+  border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow-md); overflow: visible;
+}
+#fx-sound svg { width: 20px; height: 20px; }
+#fx-sound[data-on="false"] { color: var(--muted); }
+#fx-sound[data-on="true"]::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent);
+  opacity: 0; animation: fx-pulse 2.4s ease-out infinite; pointer-events: none;
+}
+
+/* ---------- Navbar ---------- */
+.topbar { transition: transform .5s var(--ease), min-height .3s var(--ease), padding .3s var(--ease), box-shadow .3s ease; }
+.topbar.fx-scrolled { min-height: 62px; padding-top: 8px; padding-bottom: 8px; box-shadow: 0 10px 30px rgba(27, 26, 23, .08); }
+.topbar.fx-hide { transform: translateY(-110%); }
+
+/* ---------- Hero: aurora + dot grid + parallax ---------- */
+.hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  background:
+    radial-gradient(900px 500px at 85% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(rgba(243, 236, 223, .07) 1px, transparent 1.5px) 0 0 / 28px 28px,
+    var(--dark);
+}
+.hero > * { position: relative; z-index: 2; }
+.hero::before, .hero::after { content: ""; position: absolute; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(50px); }
+.hero::before {
+  width: 60vmax; height: 60vmax; left: -18vmax; top: -28vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), transparent 65%);
+  animation: fx-aurora-a 16s ease-in-out infinite alternate;
+}
+.hero::after {
+  width: 50vmax; height: 50vmax; right: -18vmax; bottom: -30vmax;
+  background: radial-gradient(circle, color-mix(in srgb, var(--olive) 45%, transparent), transparent 65%);
+  animation: fx-aurora-b 20s ease-in-out infinite alternate;
+}
+.hero-art { translate: 0 calc(var(--sy, 0) * -.05px); }
+.hero .sunlight    { translate: calc(var(--px, 0) *   8px) calc(var(--py, 0) *  4px); transition: translate .5s var(--ease); }
+.hero .wall-art    { translate: calc(var(--px, 0) * -14px) calc(var(--py, 0) * -10px); transition: transform .4s ease, translate .5s var(--ease); }
+.hero .sofa        { translate: calc(var(--px, 0) *  10px) calc(var(--py, 0) *  4px); transition: translate .5s var(--ease); }
+.hero .coffee-table{ translate: calc(var(--px, 0) *  18px) calc(var(--py, 0) *  6px); transition: translate .5s var(--ease); }
+.hero .plant       { translate: calc(var(--px, 0) * -24px) calc(var(--py, 0) * -6px); transition: translate .5s var(--ease); }
+.hero .rug         { translate: calc(var(--px, 0) *   5px) 0; transition: translate .5s var(--ease); }
+.room-photo { animation: none; clip-path: inset(0 round 24px); }
+
+/* ---------- Word-by-word heading reveal ---------- */
+.fx-split { animation: none !important; opacity: 1 !important; }
+.fx-w { display: inline-block; overflow: hidden; vertical-align: top; padding: .04em .12em .14em .06em; margin: -.04em -.12em -.14em -.06em; }
+.fx-wi { display: inline-block; transform: translateY(118%) rotate(5deg); transform-origin: left bottom;
+         animation: fx-word .95s var(--ease) forwards; animation-delay: calc(var(--i) * 80ms + 120ms); }
+.fx-split:not(.fx-in) .fx-wi { animation-play-state: paused; }
+.hero h1 em { background: none; -webkit-text-fill-color: currentColor; color: #E58A68; }
+.hero h1 em .fx-wi {
+  background: linear-gradient(90deg, #E58A68, #F2C9A5, #E58A68) 0 0 / 200% auto;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: fx-word .95s var(--ease) forwards, hp-gradient 6s linear infinite;
+  animation-delay: calc(var(--i) * 80ms + 120ms), 0s;
+}
+
+/* ---------- Mouse-follow glow (cards) ---------- */
+.product-card, .feature-strip div, .panel, .stat, .form-card { position: relative; }
+.product-card::after, .feature-strip div::after, .panel::after, .stat::after, .form-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .35s;
+  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 17%, transparent), transparent 65%);
+}
+.product-card:hover::after, .feature-strip div:hover::after, .panel:hover::after, .stat:hover::after, .form-card:hover::after { opacity: 1; }
+
+/* ---------- 3D tilt on product cards ---------- */
+.product-card { transform-style: preserve-3d; transition: transform .25s ease-out, box-shadow .3s ease, border-color .3s ease; }
+.product-card:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); }
+.product-card .product-visual { transition: background .3s ease, translate .35s var(--ease); }
+.product-card:hover .product-visual { translate: 0 0 26px; }
+.product-visual::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; transform: translateX(-120%);
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .6) 50%, transparent 65%);
+}
+.product-card:hover .product-visual::after { transform: translateX(120%); transition: transform .9s var(--ease); }
+
+/* ---------- Magnetic buttons + ripple ---------- */
+.btn { transition: background-color .2s, color .2s, border-color .2s, transform .2s var(--ease), box-shadow .2s, translate .3s var(--ease); translate: var(--mx, 0) var(--my, 0); }
+.brand-mark { translate: var(--mx, 0) var(--my, 0); }
+fx-r.fx-ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, .45); transform: scale(0); animation: fx-rip .7s ease-out forwards; pointer-events: none; }
+.btn-outline fx-r.fx-ripple, .catalogue-pick fx-r.fx-ripple { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+.catalogue-pick { overflow: hidden; }
+
+/* ---------- Animated gradient border on focus ---------- */
+.form-card::before {
+  content: ""; position: absolute; inset: -1.5px; border-radius: inherit; padding: 1.5px; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: conic-gradient(from var(--fx-ang), transparent 0 55%, var(--accent), #E58A68, transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: fx-spin 3s linear infinite;
+}
+.form-card:focus-within::before { opacity: 1; }
+
+/* ---------- Designer extras ---------- */
+.scene-canvas { position: relative; }
+.scene-canvas::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 100px rgba(0, 0, 0, .14); }
+.scene-total strong { display: inline-block; transform-origin: left; }
+.fx-bump { animation: fx-bump .6s var(--ease); }
+tbody tr:hover td:first-child { box-shadow: inset 3px 0 var(--accent); }
+
+/* ---------- Confetti ---------- */
+.fx-confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 150; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body::after, .hero::before, .hero::after, #fx-curtain, #fx-ring, #fx-dot { display: none !important; }
+  .fx-wi { animation: none !important; transform: none !important; }
+  .product-card:hover { transform: none; }
+}
